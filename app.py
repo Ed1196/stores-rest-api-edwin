@@ -1,3 +1,8 @@
+
+#Allows us to get access to the enviromental 
+#variables declared within the host system, Heroku.
+import os
+
 from security import authenticate, identity
 from flask import Flask, jsonify, request
 from datetime import timedelta
@@ -30,7 +35,8 @@ app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds = 1800)
 app.config['JWT_AUTH_USERNAME_KEY'] = 'email'
 
 #Tells sqlAlchemy where to find the data.db file
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+                        #If the app can't find the enviromental variable, then use the second connection
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///data.db')
 
 #Its sort of a listener
 # In order to know when an object changes, but not changed in the database
