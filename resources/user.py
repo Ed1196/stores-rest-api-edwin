@@ -29,3 +29,18 @@ class UserRegister(Resource):
         user.save_to_db()
 
         return {'message':'User was created succesfully!'}, 201
+
+class User(Resource):
+    @classmethod
+    def get(cls, user_id):
+        user = UserModel.findById(user_id) 
+        if user is not None:
+            return {'user': user.json()}
+
+    @classmethod
+    def delete(cls, user_id):
+        user = UserModel.findById(user_id)
+        if user is not None:
+            user.delete_from_db()
+            return {'message': 'User deleted succesfully.'}
+        return {'message': 'User does not exist.'}

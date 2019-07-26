@@ -13,7 +13,7 @@ from flask_restful import Resource, Api, reqparse
 
 #Will allow us use JWT with our app
 from flask_jwt import JWT, jwt_required
-from resources.user import UserRegister
+from resources.user import UserRegister, User
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
 
@@ -36,13 +36,23 @@ app.config['JWT_AUTH_USERNAME_KEY'] = 'email'
 
 #Tells sqlAlchemy where to find the data.db file
                         #If the app can't find the enviromental variable, then use the second connection
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///data.db')
+#app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///data.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 
 #Its sort of a listener
 # In order to know when an object changes, but not changed in the database
 # extension flask_sqlalchemy was tracking it. However we dont need it because
 # SQLAlchemy already has a tracker built into its library
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# If Flask-JWT raises an error, then the Flask app will not see the error, unless this is true
+app.config['PROPAGATE_EXCEPTIONS'] = True
+
+# With this flask decorator will run the method below it before the first request
+# db.create_all() will create all the tables in the database
+@app.before_first_request
+def create_tables():
+    db.create_all()
 
 
 #JWT: Will create a new endpoint
@@ -69,6 +79,8 @@ api.add_resource(Item, '/item/<string:name>') # http://127.0.0.1/student/Edwin
 api.add_resource(ItemList, '/items')
 #When this endpoint gets hit, the UserRegister post method gets called
 api.add_resource(UserRegister, '/register')
+
+api.add_resource(User, '/user/<int:user_id>')
 
 if __name__ == '__main__':
     #Circular import

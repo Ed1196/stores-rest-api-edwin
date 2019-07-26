@@ -26,13 +26,22 @@ class ItemModel(db.Model):
 
     #Return a JSON representation of a model
     def json(self):
-        return {'name': self.name, 'price': self.price}
+        return {
+            'id': self.id,
+            'name': self.name, 
+            'price': self.price,
+            'store_id': self.store_id
+            }
 
     @classmethod
     def find_by_name(cls, name):
         # query: Comes from db.Model; query builder
         # SELECT * FROM items WHERE name = name LIMIT 1
         return ItemModel.query.filter_by(name=name).first()
+
+    @classmethod
+    def find_all(cls):
+        return cls.query.all()
 
 
     def delete_from_db(self):
