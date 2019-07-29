@@ -82,6 +82,7 @@ api.add_resource(UserRegister, '/register')
 
 api.add_resource(User, '/user/<int:user_id>')
 
+#IS THIS FILE DIRECTLY BEING RUNNED BY PYTHON
 if __name__ == '__main__':
     #Circular import
     from db import db
