@@ -12,7 +12,7 @@ from datetime import timedelta
 from flask_restful import Resource, Api, reqparse
 
 #Will allow us use JWT with our app
-from flask_jwt import JWT, jwt_required
+from flask_jwt_extended import JWTMananger
 from resources.user import UserRegister, User
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
@@ -54,14 +54,7 @@ app.config['PROPAGATE_EXCEPTIONS'] = True
 def create_tables():
     db.create_all()
 
-
-#JWT: Will create a new endpoint
-    #we send JWT a user name and a password
-        #then it will call the authenticate method
-        #if authentication is good, a JWT token will be sent back and stored in jwt
-    #JWT will only use the identity_function when it sends a JWT token
-jwt = JWT(app, authenticate, identity)  # /auth, /login after 'JWT_AUTH_URL_RULE'
-
+jwt = JWTMananger(app)  # No longer creates an /auth endpoint
 @jwt.auth_response_handler
 def customized_response_handler(access_token, identity):
     return jsonify({
