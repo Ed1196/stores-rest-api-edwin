@@ -12,9 +12,10 @@ from flask_restful import Resource, Api, reqparse
 
 #Will allow us use JWT with our app
 from flask_jwt_extended import JWTManager
-from resources.user import UserRegister, User, UserLogin, TokenRefresh
+from resources.user import UserRegister, User, UserLogin, TokenRefresh, UserList
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
+from blacklist import BLACKLIST
 
 
 app = Flask(__name__)
@@ -38,6 +39,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # If Flask-JWT raises an error, then the Flask app will not see the error, unless this is true
 app.config['PROPAGATE_EXCEPTIONS'] = True
 
+# Configuration for enabling blacklisting.
+app.config['JWY_BLACKLIST_ENABLED'] = True
+# enable blacklist if a blacklisted id is using a access or refresh token.
+app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access','refresh']
+
 # With this flask decorator will run the method below it before the first request
 # db.create_all() will create all the tables in the database
 @app.before_first_request
@@ -54,6 +60,52 @@ def add_claims_to_jwt(identity):
     else:
         return {'isAdmin': False}
 
+# Configuring jwt_extended callbacks and responses.
+@jwt.expired_token_loader
+def expired_token_callback():
+    return jsonify({
+        'description': 'The token has expired.',
+        'error': 'token_expired'
+    }), 401
+
+# Error sent when user sents an non_jwt string
+@jwt.invalid_token_loader
+def expired_token_callback(error):
+    return jsonify({
+        'description': 'Signature verification failed.',
+        'error': 'invalid_jwt'
+    }), 401
+
+@jwt.unauthorized_loader
+def unauthorized_token_callback(error):
+    return jsonify({
+        'description': 'No auth token was present.',
+        'error': 'auth_jwt_required'
+    }), 401
+
+@jwt.needs_fresh_token_loader
+def needs_fresh_token_callback():
+    return jsonify({
+        'description': 'The token is not fresh.',
+        'error': 'fresh_token_required'
+    }), 401
+
+# Prevent a previously auth token from accessing resources that
+# require authentication.
+@jwt.revoked_token_loader
+def revoked_token_callback():
+    return jsonify({
+        'description': 'The token has been revoked.',
+        'error': 'token_revoked'
+    }), 401
+
+# decrypted_token: We can access any data of the token.
+# decrypted_token is the user's id and it will check if it's in the BLACKLIST
+# If in the black list, call @jwt.revoke_token_loader()
+@jwt.token_in_blacklist_loader
+def check_if_token_in_blacklist(decrypted_token):
+    return decrypted_token['identity'] in BLACKLIST
+
 
 api.add_resource(Store, '/store/<string:name>')
 api.add_resource(StoreList, '/stores')
@@ -66,6 +118,7 @@ api.add_resource(User, '/user/<int:user_id>')
 #With JWT_Extended we have to declare the endpoint.
 api.add_resource(UserLogin, '/login')
 api.add_resource(TokenRefresh,'/refresh')
+api.add_resource(UserList, '/users')
 
 if __name__ == '__main__':
     #Circular import

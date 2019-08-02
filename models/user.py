@@ -41,3 +41,7 @@ class UserModel(db.Model):
     @classmethod
     def findById(cls, _id):
         return cls.query.filter_by(id = _id).first()
+
+    @classmethod
+    def find_all(cls):
+        return cls.query.all()

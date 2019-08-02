@@ -123,6 +123,7 @@ class Item(Resource):
 
 
 class ItemList(Resource):
+    
     @jwt_optional
     def get(self):
         user_id = get_jwt_identity()

@@ -86,3 +86,15 @@ class TokenRefresh(Resource):
         # If fresh==False; password and username were given days ago.
         new_token = create_access_token(identity=current_user, fresh=False)
         return {'access_token': new_token}, 200
+
+class UserList(Resource):
+    @jwt_optional
+    def get(self):
+        user_id = get_jwt_identity()
+        if user_id:
+            users = [user.json() for user in UserModel.find_all()]
+            return {
+                'users': [user['username'] for user in users]
+            }
+        return {'message': 'Log in to get list of users.'}
+
