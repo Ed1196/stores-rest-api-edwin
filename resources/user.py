@@ -9,7 +9,9 @@ from flask_jwt_extended import (
     get_jwt_claims, 
     jwt_optional, 
     get_jwt_identity,
-    jwt_refresh_token_required)
+    jwt_refresh_token_required,
+    get_raw_jwt)
+from blacklist import BLACKLIST
 
 #Variable that will allow us to parse the data
 _user_parser = reqparse.RequestParser()
@@ -94,7 +96,14 @@ class UserList(Resource):
         if user_id:
             users = [user.json() for user in UserModel.find_all()]
             return {
-                'users': [user['username'] for user in users]
+                'users': [user for user in users]
             }
         return {'message': 'Log in to get list of users.'}
+
+class UserLogout(Resource):
+    @jwt_required
+    def post(self):
+        jti = get_raw_jwt['jti']
+        BLACKLIST.add(jti)
+        return {'message': 'Succesful logout'}, 200
 

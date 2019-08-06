@@ -123,13 +123,13 @@ class Item(Resource):
 
 
 class ItemList(Resource):
-    
+
     @jwt_optional
     def get(self):
         user_id = get_jwt_identity()
-        items = [item.json() for item in ItemModel.find_all()]
+        items = [ item.json() for item in ItemModel.find_all() ]
         #Check if the jwt is valid, proving user is logged
-        if user_id:
+        if user_id is not None:
             return {'item': items}, 200
         #Return this if user is not logged.
         return {
