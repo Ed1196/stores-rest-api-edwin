@@ -48,13 +48,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # If Flask-JWT raises an error, then the Flask app will not see the error, unless this is true
 app.config['PROPAGATE_EXCEPTIONS'] = True
 
-# With this flask decorator will run the method below it before the first request
-# db.create_all() will create all the tables in the database
-@app.before_first_request
-def create_tables():
-    db.create_all()
-
-
 #JWT: Will create a new endpoint
     #we send JWT a user name and a password
         #then it will call the authenticate method
