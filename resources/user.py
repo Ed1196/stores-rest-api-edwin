@@ -77,7 +77,6 @@ class UserLogin(Resource):
                 'access_token': access_token,
                 'refresh_token': refresh_token
             }, 200
-
         return {'message': 'Invalid Credentials'}, 401
         
 class TokenRefresh(Resource):
@@ -103,7 +102,7 @@ class UserList(Resource):
 class UserLogout(Resource):
     @jwt_required
     def post(self):
-        jti = get_raw_jwt['jti']
+        jti = get_raw_jwt()['jti']
         BLACKLIST.add(jti)
         return {'message': 'Succesful logout'}, 200
 
