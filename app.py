@@ -34,10 +34,9 @@ app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds = 1800)
 #config JWT auth key name to be 'email' instead of default 'username'
 app.config['JWT_AUTH_USERNAME_KEY'] = 'email'
 
-#Tells sqlAlchemy where to find the data.db file
-                        #If the app can't find the enviromental variable, then use the second connection
-#app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///data.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+ #If the app can't find the enviromental variable, then use the second connection
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///data.db')
+
 
 #Its sort of a listener
 # In order to know when an object changes, but not changed in the database
