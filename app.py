@@ -44,11 +44,12 @@ app.config['JWT_BLACKLIST_ENABLED'] = True  # enable blacklist feature
 # enable blacklist if a blacklisted id is using a access or refresh token.
 app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access','refresh']
 
+#WILL ONLY BE USED LOCALLY
 # With this flask decorator will run the method below it before the first request
 # db.create_all() will create all the tables in the database
-@app.before_first_request
-def create_tables():
-    db.create_all()
+#@app.before_first_request
+#def create_tables():
+#    db.create_all()
 
 jwt = JWTManager(app)  # No longer creates an /auth endpoint
 
