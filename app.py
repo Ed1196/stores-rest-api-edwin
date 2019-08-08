@@ -47,9 +47,9 @@ app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access','refresh']
 #WILL ONLY BE USED LOCALLY
 # With this flask decorator will run the method below it before the first request
 # db.create_all() will create all the tables in the database
-#@app.before_first_request
-#def create_tables():
-#    db.create_all()
+@app.before_first_request
+def create_tables():
+    db.create_all()
 
 jwt = JWTManager(app)  # No longer creates an /auth endpoint
 
@@ -107,6 +107,10 @@ def revoked_token_callback():
         "description": "The token has been revoked.",
         'error': 'token_revoked'
     }), 401
+
+@app.route("/", methods = ['GET'])
+def homePage():
+    return "This is Edwin's API, nothing to see here :)"
 
 
 api.add_resource(Store, '/store/<string:name>')
