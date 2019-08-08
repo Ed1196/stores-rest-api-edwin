@@ -61,11 +61,12 @@ def customized_response_handler(access_token, identity):
         'user_id': identity.id
     })
 
+#USE ONLY WHEN WORKING LOCALY
 # With this flask decorator will run the method below it before the first request
 # db.create_all() will create all the tables in the database
-@app.before_first_request
-def create_tables():
-    db.create_all()
+#@app.before_first_request
+#def create_tables():
+#    db.create_all()
 
 
 
