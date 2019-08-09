@@ -115,7 +115,6 @@ class Item(Resource):
         else:
             #If item does exists, we can manipulate its values
             item.price = data['price']
-            item.store_id = data['store_id']
 
         #Because item is unique, sqlAlchemy will reconginize it and update it
         item.save_to_db()
