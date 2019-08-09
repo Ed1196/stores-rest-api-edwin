@@ -27,7 +27,7 @@ class Item(Resource):
         help='This field cannot be left blank!')
     parser.add_argument('store_id',
         type=int,
-        required=True,
+        required=False,
         help='Every item needs a store id.')
 
     #Forces authentication before we reach the get method, will call the 'identity()' method from security
